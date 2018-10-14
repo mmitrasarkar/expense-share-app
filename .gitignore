@@ -1,7 +1,7 @@
 # Build and Release Folders
-./target/
+target/*
 
 # Other files and folders
-.settings/
-.project/
-.classpath/
+.settings
+.project
+.classpath
