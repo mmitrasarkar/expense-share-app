@@ -31,7 +31,7 @@ public class SettlementController {
 	
 
 	@GetMapping("/settlements/{groupId}")
-	public List<Settlement> retrieveAllSettlements(@PathVariable String groupId,@RequestParam String payerId,@RequestParam String receiverId) {
+	public List<Settlement> retrieveAllSettlements(@PathVariable String groupId,@RequestParam(required=false) String payerId,@RequestParam(required=false) String receiverId) {
 		return settlementRepo.getSettlement(payerId, receiverId, groupId);
 	}
 	

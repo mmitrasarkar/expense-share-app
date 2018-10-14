@@ -27,14 +27,10 @@ public class SettlementService {
 		List<Settlement> settlements = new ArrayList<>();
 		while (numberOfSettlementDone < totalNumerofMembers)
 		{
-			logger.info("Total number of settlement : {}",numberOfSettlementDone);
 			Collections.sort(members,new MemberComparator());
-			members.forEach(m->logger.info("name {} , balance{}",m.getMemberName(),m.getBalance()));
 			Member receiver = members.get(totalNumerofMembers-1);
 			Member payer = members.get(0);
 			int amount = 0;
-			logger.info("Receiver name {} ,balance : {}",receiver.getMemberName(),receiver.getBalance());
-			logger.info("Sender name {},balance : {}",payer.getMemberName(),payer.getBalance());
 			int howmuchTopay = -1*payer.getBalance();
 			if (howmuchTopay>receiver.getBalance())
 				amount = receiver.getBalance();
