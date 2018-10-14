@@ -1,5 +1,5 @@
 # Build and Release Folders
-target/
+./target/
 
 # Other files and folders
 .settings/
