@@ -2,6 +2,8 @@ package com.expense.model;
 
 import org.springframework.data.annotation.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Member Entity class
  * @author USER
@@ -12,6 +14,7 @@ public class Member implements Comparable<Member>{
 	private String memberId;
 	private String memberName;
 	private String email;
+	@JsonIgnore
 	private int balance;
 	
 	public int getBalance() {

@@ -6,6 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,14 +44,15 @@ public class GroupController {
 	}
 
 	@PostMapping("/groups")
-	public Group createGroup(@RequestBody Group group) {
+	public ResponseEntity<Group> createGroup(@RequestBody Group group) {
 		logger.info("Inside Group create service");
-		return groupRepository.save(group);
+		group = groupRepository.save(group);
+		return new ResponseEntity<Group>(group,HttpStatus.CREATED);
 
 	}
 
 	@PostMapping("/groups/{groupId}/member")
-	public Group addMember(@RequestBody Member member, @PathVariable String groupId) {
+	public ResponseEntity<Group> addMember(@RequestBody Member member, @PathVariable String groupId) {
 		logger.info("Inside Group create service");
 		Group group = groupRepository.findById(groupId).get();
 		List<Member> members = group.getMembers();
@@ -58,8 +61,8 @@ public class GroupController {
 			group.setMembers(members);
 		}
 		members.add(member);
-
-		return groupRepository.save(group);
+		group = groupRepository.save(group);
+		return new ResponseEntity<Group>(group,HttpStatus.OK);
 
 	}
 
@@ -92,8 +95,5 @@ public class GroupController {
 		 */
 		groupRepository.deleteById(groupId);
 	}
-
-
-	
 
 }
