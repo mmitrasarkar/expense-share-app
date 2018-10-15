@@ -7,20 +7,38 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.expense.controller.GroupController;
 import com.expense.model.Member;
 import com.expense.model.Settlement;
+import com.expense.repository.SettlementRepository;
 import com.expense.utils.MemberComparator;
 import com.expense.utils.SettlementConstants;
-
+/**
+ * Settlement service
+ * @author USER
+ *
+ */
 @Component
 public class SettlementService {
 	
 	Logger logger = LoggerFactory.getLogger(GroupController.class);
+	
 
-	public List<Settlement> calculateSetlements(List<Member> members,String groupId)
+	@Autowired
+	SettlementRepository settlementRepo;
+	/**
+	 * Once the spend is added this service will execute asynchronously to calculate the spend
+	 * We can enhance it by SMS alert to the user so thay can come and check on the system 
+	 * @param members
+	 * @param groupId
+	 * @return
+	 */
+	@Async
+	public void calculateSetlements(List<Member> members,String groupId)
 	{
 		int numberOfSettlementDone = 0;
 		int totalNumerofMembers = members.size();
@@ -30,14 +48,14 @@ public class SettlementService {
 			Collections.sort(members,new MemberComparator());
 			Member receiver = members.get(totalNumerofMembers-1);
 			Member payer = members.get(0);
-			int amount = 0;
-			int howmuchTopay = -1*payer.getBalance();
+			double amount = 0.00;
+			double howmuchTopay = -1*payer.getBalance();
 			if (howmuchTopay>receiver.getBalance())
 				amount = receiver.getBalance();
 			else
 				amount = payer.getBalance();
 			
-			if (amount <0)
+			if (amount <0.00)
 			  amount=-1*amount;
 			payer.setBalance((payer.getBalance()+(amount)));
 			receiver.setBalance(receiver.getBalance()-(amount));
@@ -57,9 +75,10 @@ public class SettlementService {
 				numberOfSettlementDone++;
 		}
 		settlements.forEach(s->logger.info("Settlements : from {}, to {}, amount {}",s.getPayerId(),s.getReceiverId(),s.getAmountToBePaid()));
-		return settlements;
+		settlementRepo.insert(settlements);
 		
 	}
+	
 
 	
 }

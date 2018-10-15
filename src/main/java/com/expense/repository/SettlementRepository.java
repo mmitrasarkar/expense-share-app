@@ -2,18 +2,19 @@ package com.expense.repository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import com.expense.model.Group;
 import com.expense.model.Settlement;
 import com.mongodb.client.result.UpdateResult;
 
@@ -24,13 +25,20 @@ public class SettlementRepository {
 
 	@Autowired
 	MongoTemplate template;
-
+	/**
+	 * Insert settlement
+	 * @param settlements
+	 */
 	public void insert(List<Settlement> settlements) {
 		logger.info("Inserting settlements");
 		template.insert(settlements, Settlement.class);
 		logger.info("Inserted settlements");
 	}
-
+	/**
+	 * Get settlement by group
+	 * @param groupId
+	 * @return
+	 */
 	public List<Settlement> getSettlementsByGroup(String groupId) {
 		Query query = new Query(Criteria.where("groupId").is(groupId));
 
@@ -39,7 +47,13 @@ public class SettlementRepository {
 		logger.info("Data: {} ", data);
 		return data;
 	}
-
+	/**
+	 * 
+	 * @param payerId
+	 * @param receiverId
+	 * @param groupId
+	 * @return
+	 */
 	public List<Settlement> getSettlement(String payerId, String receiverId, String groupId) {
 		Query query = null;
 		if (payerId == null || payerId.isEmpty())
@@ -64,7 +78,11 @@ public class SettlementRepository {
 		logger.info("Data: {} ", data);
 		return data;
 	}
-
+	/**
+	 * Update Settlement
+	 * @param settlement
+	 * @param groupId
+	 */
 	public void updateSettlement(Settlement settlement, String groupId) {
 		Query query = new Query(
 				Criteria.where("groupId").is(groupId).andOperator(Criteria.where("payerId").is(settlement.getPayerId()),
@@ -84,10 +102,31 @@ public class SettlementRepository {
 		logger.info("Data: {} ", data.getModifiedCount());
 
 	}
-
+	/**
+	 * Delete settlement for the group when the group is purged
+	 * @param groupId
+	 */
 	public void delete(String groupId) {
 		Query query = new Query(Criteria.where("groupId").is(groupId));
 		template.findAllAndRemove(query, Settlement.class);
 
 	}
+	
+	/**
+	 * For a particular group how much total settlement pending
+	 * @param groupId
+	 * @return
+	 */
+	public double totalPendingSettlementByGroup(String groupId) {
+		Aggregation agg = Aggregation.newAggregation(Aggregation.match(Criteria.where("groupId").is(groupId)),
+				Aggregation.group().sum("amountToBePaid").as("settlementPending"),
+				Aggregation.project("settlementPending").andExclude("_id"));
+
+		AggregationResults<Document> groupResults = template.aggregate(agg, "settlement", Document.class);
+
+		logger.info("Data: {} ", groupResults.getUniqueMappedResult());
+		return groupResults.getUniqueMappedResult().getDouble("settlementPending");
+
+	}
+
 }

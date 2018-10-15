@@ -12,12 +12,12 @@ public class Member implements Comparable<Member>{
 	private String memberId;
 	private String memberName;
 	private String email;
-	private int balance;
+	private double balance;
 	
-	public int getBalance() {
+	public double getBalance() {
 		return balance;
 	}
-	public void setBalance(int balance) {
+	public void setBalance(double balance) {
 		this.balance = balance;
 	}
 	public String getMemberId() {

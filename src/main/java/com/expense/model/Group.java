@@ -3,7 +3,11 @@ package com.expense.model;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-
+/**
+ * Group Entity
+ * @author USER
+ *
+ */
 public class Group {
 	
 	@Id

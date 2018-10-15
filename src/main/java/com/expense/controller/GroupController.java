@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expense.model.Group;
 import com.expense.model.Member;
 import com.expense.repository.GroupRepository;
-
+/**
+ * Services for managing a group
+ * @author USER
+ *
+ */
 @RestController
 public class GroupController {
 	Logger logger = LoggerFactory.getLogger(GroupController.class);
@@ -26,23 +30,33 @@ public class GroupController {
 	@Autowired
 	private GroupRepository groupRepository;
 	
-	@GetMapping("/groups/{groupId}/members")
-	public List<Member> retrieveAllmembers(@PathVariable String groupId) {
-		return null;
-	}
-
+	/**
+	 * Returns all groups 
+	 * Super admin role feature
+	 * @return
+	 */
 	@GetMapping("/groups")
 	public List<Group> retrieveAllGroups() {
 		logger.info("Inside Group service");
 		return groupRepository.findAll();
 	}
-
+	/**
+	 * Admin can see the details of a group
+	 * @param groupId
+	 * @return
+	 */
 	@GetMapping("/groups/{groupId}")
 	public Group retrieveGroup(@PathVariable String groupId) {
 		logger.info("Inside Group service");
 		return groupRepository.findById(groupId).get();
 	}
 
+	/**
+	 * One member can create a group then that person will be admin
+	 * The group feature can be extended with multiple admin
+	 * @param group
+	 * @return
+	 */
 	@PostMapping("/groups")
 	public ResponseEntity<Group> createGroup(@RequestBody Group group) {
 		logger.info("Inside Group create service");
@@ -51,6 +65,13 @@ public class GroupController {
 
 	}
 
+	/**
+	 * Service to add member to a group
+	 * It is individual member add
+	 * @param member
+	 * @param groupId
+	 * @return
+	 */
 	@PostMapping("/groups/{groupId}/member")
 	public ResponseEntity<Group> addMember(@RequestBody Member member, @PathVariable String groupId) {
 		logger.info("Inside Group create service");
@@ -65,7 +86,12 @@ public class GroupController {
 		return new ResponseEntity<Group>(group,HttpStatus.OK);
 
 	}
-
+	/**
+	 * Bulk loading of members
+	 * @param members
+	 * @param groupId
+	 * @return
+	 */
 	@PostMapping("/groups/{groupId}/members")
 	public Group addMembers(@RequestBody List<Member> members, @PathVariable String groupId) {
 		logger.info("Inside Group create service");
@@ -75,8 +101,13 @@ public class GroupController {
 		return groupRepository.save(group);
 
 	}
-
-
+  
+   /**
+    * Bulk member delete 
+    * Another service interface can be provided to delete single member
+    * @param groupId
+    * @return
+    */
 	@DeleteMapping("/groups/{groupId}/members")
 	public Group deleteMembers(@PathVariable String groupId) {
 		logger.info("Inside Spend create service {}", groupId);
@@ -85,7 +116,11 @@ public class GroupController {
 
 		return groupRepository.save(group);
 	}
-	
+	/**
+	 * Delete a group once all the settlements are closed
+	 * This also should be admin feature
+	 * @param groupId
+	 */
 	@DeleteMapping("/groups/{groupId}")
 	public void deleteGroup(@PathVariable String groupId) {
 		logger.info("Inside Group Delete service {}", groupId);

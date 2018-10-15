@@ -3,7 +3,11 @@ package com.expense.model;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-
+/**
+ * Payment history entity class
+ * @author USER
+ *
+ */
 public class PaymentHistory {
 
 
@@ -12,7 +16,7 @@ public class PaymentHistory {
 	private String groupId;
 	private String receiverId;
 	private String payerId;
-	private int amountPaid;
+	private Double amountPaid;
 	private Date paymentDate;
 	
 	public String getId() {
@@ -34,10 +38,10 @@ public class PaymentHistory {
 	public void setPayerId(String payerId) {
 		this.payerId = payerId;
 	}
-	public int getAmountPaid() {
+	public double getAmountPaid() {
 		return amountPaid;
 	}
-	public void setAmountPaid(int amountPaid) {
+	public void setAmountPaid(double amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 	public Date getPaymentDate() {

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.expense.ExpenseServicesApplication;
 import com.expense.model.Group;
 import com.expense.model.Member;
-import com.expense.model.PaymentHistory;
 import com.expense.model.Settlement;
 import com.expense.model.Spend;
 import com.expense.repository.GroupRepository;
@@ -33,7 +31,11 @@ import com.expense.repository.PaymentHistoryRepository;
 import com.expense.repository.SettlementRepository;
 import com.expense.repository.SpendRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+/**
+ * Settlement related tests
+ * @author USER
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ExpenseServicesApplication.class)
 @AutoConfigureMockMvc
@@ -54,7 +56,10 @@ public class SettlementControllerTest {
 	
 	@Autowired
 	PaymentHistoryRepository paymentRepository;
-
+	/**
+	 * Partial and full payment test
+	 * @throws Exception
+	 */
 	@Test
 	public void partialPaymentTest() throws Exception {
 		String members = "[{\"memberId\": \"p10\",\"memberName\": \"p10\",\"email\": \"p10@gmail.com\"},{\"memberId\": \"p2\",\"memberName\": \"p2\",\"email\": \"p2@gmail.com\"},{\"memberId\": \"p3\",\"memberName\": \"p3\",\"email\": \"p3@gmail.com\"},{\"memberId\": \"p1\",\"memberName\": \"p1\",\"email\": \"p1@gmail.com\"},{\"memberId\": \"p12\",\"memberName\": \"p12\",\"email\": \"p12@gmail.com\"},{\"memberId\": \"p4\",\"memberName\": \"p4\",\"email\": \"p4@gmail.com\"},{\"memberId\": \"p5\",\"memberName\": \"p5\",\"email\": \"p5@gmail.com\"},{\"memberId\": \"p6\",\"memberName\": \"p6\",\"email\": \"p6@gmail.com\"},{\"memberId\": \"p7\",\"memberName\": \"p7\",\"email\": \"p7@gmail.com\"},{\"memberId\": \"p8\",\"memberName\": \"p8\",\"email\": \"p8@gmail.com\"},{\"memberId\": \"p9\",\"memberName\": \"p9\",\"email\": \"p9@gmail.com\"}]";
@@ -105,21 +110,29 @@ public class SettlementControllerTest {
 		assertSettlementRemaining(mockGroup.getGroupId(), paymentMade);
 
 	}
-
+	/**
+	 * Assert the remaining settlement
+	 * @param groupId
+	 * @param settlement
+	 */
 	private void assertSettlementRemaining(String groupId, Settlement settlement) {
 		List<Settlement> updatedSettlement = settlementRepo.getSettlement(settlement.getPayerId(),
 				settlement.getReceiverId(), groupId);
 		Settlement s = updatedSettlement.get(0);
-		assertEquals((settlement.getAmountToBePaid() - settlement.getAmountPaid()), s.getAmountToBePaid());
+		assertEquals((settlement.getAmountToBePaid() - settlement.getAmountPaid()), s.getAmountToBePaid(),0.01);
 	}
-	
+	/**
+	 * Assert the payment history
+	 * @param groupId
+	 * @param settlement
+	 */
 	private void assertPaymentHistory(String groupId, Settlement settlement) {
 		List<Settlement> updatedSettlement = settlementRepo.getSettlement(settlement.getPayerId(),
 				settlement.getReceiverId(), groupId);
-		Integer totalPayment = paymentRepository.getTotalPaymentByUser(settlement.getPayerId(),
+		double totalPayment = paymentRepository.getTotalPaymentByUser(settlement.getPayerId(),
 				settlement.getReceiverId(), groupId);
 		Settlement s = updatedSettlement.get(0);
-		assertEquals(settlement.getAmountPaid(), totalPayment.intValue());
+		assertEquals(settlement.getAmountPaid(), totalPayment,0.01);
 	}
 
 }

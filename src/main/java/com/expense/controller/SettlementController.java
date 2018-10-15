@@ -18,7 +18,11 @@ import com.expense.model.PaymentHistory;
 import com.expense.model.Settlement;
 import com.expense.repository.PaymentHistoryRepository;
 import com.expense.repository.SettlementRepository;
-
+/**
+ * Settlement related services
+ * @author USER
+ *
+ */
 @RestController
 public class SettlementController {
 
@@ -29,12 +33,22 @@ public class SettlementController {
 	@Autowired
 	PaymentHistoryRepository paymentHistoryRepo;
 	
-
+	/**
+	 * Retrieve all settlements for a group
+	 * @param groupId
+	 * @param payerId
+	 * @param receiverId
+	 * @return
+	 */
 	@GetMapping("/settlements/{groupId}")
 	public List<Settlement> retrieveAllSettlements(@PathVariable String groupId,@RequestParam(required=false) String payerId,@RequestParam(required=false) String receiverId) {
 		return settlementRepo.getSettlement(payerId, receiverId, groupId);
 	}
-	
+	/**
+	 * Update settlement when someone pays
+	 * @param groupId
+	 * @param settlement
+	 */
 	@PutMapping("/settlements/{groupId}")
 	public void updateSettlement(@PathVariable String groupId,@RequestBody Settlement settlement) {
 		PaymentHistory paymentHistory = new PaymentHistory();
@@ -49,7 +63,10 @@ public class SettlementController {
 		settlementRepo.updateSettlement(settlement, groupId);
 		paymentHistoryRepo.insert(paymentHistory, groupId);
 	}
-	
+	/**
+	 * Delete spends
+	 * @param groupId
+	 */
 	@DeleteMapping("/settlements/{groupId}")
 	public void deleteSpends(@PathVariable String groupId) {
 		logger.info("Inside Spend delete service {}", groupId);

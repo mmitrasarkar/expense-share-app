@@ -12,6 +12,7 @@ import com.mongodb.MongoClient;
 
 @Configuration
 @Component
+
 public class ExpenseMongoConfig {
 	@Value("${spring.data.mongodb.host}")
 	private String mongoDbHost;

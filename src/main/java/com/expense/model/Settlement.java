@@ -3,7 +3,11 @@ package com.expense.model;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-
+/**
+ * Settlement class
+ * @author USER
+ *
+ */
 public class Settlement {
 
 	@Id
@@ -11,8 +15,8 @@ public class Settlement {
 	private String groupId;
 	private String receiverId;
 	private String payerId;
-	private int amountToBePaid;
-	private int amountPaid;
+	private double amountToBePaid;
+	private double amountPaid;
 	private Date createDate;
 	private Date updateDate;
 	
@@ -37,16 +41,16 @@ public class Settlement {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public int getAmountToBePaid() {
+	public double getAmountToBePaid() {
 		return amountToBePaid;
 	}
-	public void setAmountToBePaid(int amountToBePaid) {
+	public void setAmountToBePaid(double amountToBePaid) {
 		this.amountToBePaid = amountToBePaid;
 	}
-	public int getAmountPaid() {
+	public double getAmountPaid() {
 		return amountPaid;
 	}
-	public void setAmountPaid(int amountPaid) {
+	public void setAmountPaid(double amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 
